@@ -12,3 +12,53 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id      String @id @default(uuid())
+  usename String
+  email   String @unique
+  senha   String
+
+  Nota Nota[]
+}
+
+model Album {
+  id      String     @id @default(uuid())
+  nome    String
+  link    String
+  capa    String
+  bandaId String
+
+  banda   Banda   @relation(fields: [bandaId], references: [id])
+  songs   Song[]
+
+  Nota Nota[]
+}
+
+model Banda {
+  id     String     @id @default(uuid())
+  nome   String  @unique
+  foto   String?
+
+  albums Album[]
+}
+
+model Song {
+  id      String    @id @default(uuid())
+  name    String
+  link    String
+  albumId String
+
+  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+}
+
+model Nota {
+  id String @id @default(uuid())
+  nota Decimal
+
+  userId String
+  user    User    @relation(fields: [userId], references: [id])
+
+  albumId String
+  album   Album   @relation(fields: [albumId], references: [id])
+}
