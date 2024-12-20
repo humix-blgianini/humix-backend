@@ -1,3 +1,5 @@
+import { authenticateJWT } from '@/middeware/auth'
+import { generateToken } from '@/utils/jwt'
 import { PrismaClient } from '@prisma/client'
 import express, { Request, Response } from 'express'
 const bcrypt = require('bcrypt')
@@ -36,5 +38,6 @@ userRoute.post('/login', async (req: Request, res: Response) => {
         return
     }
 
-    res.send({message: "usuário logado"})
+    const accessToken = generateToken({id: user.id, email: user.email, senha: user.senha})
+    res.send({token: accessToken})
 })
