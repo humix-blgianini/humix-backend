@@ -28,14 +28,14 @@ albumRoute.post('/', authenticateJWT, async (req: Request, res: Response) => {
         link: "a",
     }))
 
-    
+
     try {
 
         const existingAlbum = await prisma.album.findUnique({
             where: { link: album_link },
         })
 
-        
+
         const band = await prisma.banda.upsert({
             where: { nome: banda_nome },
             update: { foto: banda_image.images[0].url },
@@ -47,41 +47,40 @@ albumRoute.post('/', authenticateJWT, async (req: Request, res: Response) => {
 
         let album;
         if (existingAlbum) {
-            // Se o álbum já existir, apenas o associa ao usuário
             album = await prisma.album.update({
                 where: { link: album_link },
                 data: {
                     users: {
-                        connect: { id: userId }, // Conecta o usuário ao álbum
+                        connect: { id: userId },
                     },
                 },
             })
         } else {
-    
-        const album = await prisma.album.create({
-            data: {
-                nome: album_nome,
-                link: album_link,
-                capa: album_art,
-                nota: 0.0,
-                banda: {
-                    connect: { id: band.id },
-                },
-                songs: {
-                    create: songCreationData,
-                },
-                users: {
-                    connect: { id: userId }
-                }
-            },
-            include: {
-                banda: true,
-                songs: true,
-                users: true,
-            }
-        })
 
-    }
+            const album = await prisma.album.create({
+                data: {
+                    nome: album_nome,
+                    link: album_link,
+                    capa: album_art,
+                    nota: 0.0,
+                    banda: {
+                        connect: { id: band.id },
+                    },
+                    songs: {
+                        create: songCreationData,
+                    },
+                    users: {
+                        connect: { id: userId }
+                    }
+                },
+                include: {
+                    banda: true,
+                    songs: true,
+                    users: true,
+                }
+            })
+
+        }
 
         res.json(album)
 
