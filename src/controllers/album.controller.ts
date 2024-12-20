@@ -2,6 +2,7 @@ import { authenticateJWT } from '@/middeware/auth'
 import { getAlbumTrack, getBandImage, searchAlbum } from '@/utils/clientSpotify'
 import { PrismaClient } from '@prisma/client'
 import express, { Request, Response } from 'express'
+import { io } from '..'
 
 export const albumRoute = express.Router()
 const prisma = new PrismaClient()
@@ -82,6 +83,7 @@ albumRoute.post('/', authenticateJWT, async (req: Request, res: Response) => {
 
         }
 
+        io.emit('newAlbum', album)
         res.json(album)
 
     } catch (error) {

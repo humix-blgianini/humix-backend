@@ -1,9 +1,12 @@
 import express from "express"
 import { routes } from "./routes"
+import * as socketio from "socket.io"
+import { createServer } from 'http'
  
 require("dotenv").config()
 const cors = require("cors")
 const app = express()
+const httpServer = createServer(app)
  
 app.use(cors())
 
@@ -15,6 +18,15 @@ const corsOptions = {
 };
 
 app.options('*', cors(corsOptions))
+
+export const io = new socketio.Server(httpServer, {
+  cors: {
+    origin: '*', 
+    methods: 'GET,POST,PUT,DELETE, PATCH',      
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,    
+  }
+})
  
 const PORT = process.env.PORT || 4000
 
