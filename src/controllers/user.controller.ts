@@ -47,7 +47,12 @@ userRoute.get('/albums', authenticateJWT, async (req: Request, res: Response) =>
 
     const albums = await prisma.album.findMany({
         where: {
-            userId: userId, 
+            users: { 
+                some: {
+                    id: userId, 
+                },
+            },
+    
         },
         include: {
             banda: true, 
