@@ -1,4 +1,3 @@
-import { authenticateJWT } from '@/middeware/auth'
 import { generateToken } from '@/utils/jwt'
 import { PrismaClient } from '@prisma/client'
 import express, { Request, Response } from 'express'
