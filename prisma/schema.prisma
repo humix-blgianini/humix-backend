@@ -19,6 +19,7 @@ model User {
   email   String @unique
   senha   String
   albuns  Album[]  @relation("UserAlbuns")
+  ratings Rating[]
 }
 
 model Album {
@@ -30,8 +31,8 @@ model Album {
   bandaId Int
   banda   Banda   @relation(fields: [bandaId], references: [id])
   songs   Song[]
-
   users   User[]  @relation("UserAlbuns")
+  ratings Rating[]
 }
 
 model Banda {
@@ -47,4 +48,15 @@ model Song {
   link    String
   albumId Int
   album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+}
+
+model Rating {
+  id       Int    @id @default(autoincrement())
+  nota     Decimal
+  userId   String
+  albumId  Int
+  user     User   @relation(fields: [userId], references: [id])
+  album    Album  @relation(fields: [albumId], references: [id])
+
+  @@unique([userId, albumId])
 }

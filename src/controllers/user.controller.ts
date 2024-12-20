@@ -27,14 +27,14 @@ userRoute.post('/login', async (req: Request, res: Response) => {
     })
 
     if (!user){
-        res.send({message: "usuário não encontrado"})
+        res.send(400)
         return
     }
 
     const hash_senha = await bcrypt.compare(senha, user.senha)
 
     if(!hash_senha){
-        res.send({message: "senha incorreta"})
+        res.send(400)
         return
     }
 
@@ -52,13 +52,93 @@ userRoute.get('/albums', authenticateJWT, async (req: Request, res: Response) =>
                     id: userId, 
                 },
             },
+            ratings: {
+                every: {
+                    nota: {equals: 0.0}
+                }
+            }
     
         },
         include: {
             banda: true, 
-            songs: true
+            songs: true,
+            ratings: {
+                where: {
+                    userId: userId, 
+                }
+                
+            }
         }    
     })
 
-    res.send({albums})
+    res.send(albums)
+})
+
+userRoute.get('/albums/rated', authenticateJWT, async (req: Request, res: Response) => {
+    const userId = req.user?.id
+
+    const albums = await prisma.album.findMany({
+        where: {
+            users: { 
+                some: {
+                    id: userId, 
+                },
+            },
+            ratings: {
+                some: {
+                    nota: {gt: 0}
+                }
+            }
+        },
+        include: {
+            banda: true, 
+            songs: true,
+            ratings: {
+                where: {
+                    userId: userId, 
+                }
+                
+            }
+        }    
+    })
+
+    res.send(albums)
+})
+
+userRoute.patch('/album/:id', authenticateJWT, async (req: Request, res: Response) => {
+    const userId = req.user?.id
+    const albumId = parseInt(req.params.id, 10)
+
+    const { nota } = req.body
+
+    const temNota = await prisma.rating.findUnique({
+        where: {
+            userId_albumId: {userId, albumId}
+        }
+    })
+
+    let nota_res
+
+    if (temNota) {
+        // Se já existe, atualiza a nota
+        nota_res = await prisma.rating.update({
+          where: {
+            userId_albumId: { userId, albumId },
+          },
+          data: {
+            nota: nota,
+          },
+        })
+      } else {
+        // Se não existe, cria uma nova avaliação
+        nota_res = await prisma.rating.create({
+          data: {
+            nota: nota,
+            userId: userId,
+            albumId: albumId,
+          },
+        })
+      }
+    
+      res.send({message: nota_res})
 })
