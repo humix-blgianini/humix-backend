@@ -18,4 +18,34 @@ model User {
   usuario String
   email   String @unique
   senha   String
+  albums Album[]
+}
+
+model Album {
+  id      Int     @id @default(autoincrement())
+  nome    String
+  link    String
+  capa    String
+  nota    Decimal
+  bandaId Int
+  banda   Banda   @relation(fields: [bandaId], references: [id])
+  songs   Song[]
+
+  userId String @default("43005ab8-7157-4ac5-b7d4-f870846ae35f")
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Banda {
+  id     Int     @id @default(autoincrement())
+  nome   String  @unique
+  foto   String?
+  albums Album[]
+}
+
+model Song {
+  id      Int    @id @default(autoincrement())
+  name    String
+  link    String
+  albumId Int
+  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
 }

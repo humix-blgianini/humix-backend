@@ -1,3 +1,4 @@
+import { authenticateJWT } from '@/middeware/auth'
 import { generateToken } from '@/utils/jwt'
 import { PrismaClient } from '@prisma/client'
 import express, { Request, Response } from 'express'
@@ -39,4 +40,20 @@ userRoute.post('/login', async (req: Request, res: Response) => {
 
     const accessToken = generateToken({id: user.id, email: user.email, senha: user.senha})
     res.send({token: accessToken})
+})
+
+userRoute.get('/albums', authenticateJWT, async (req: Request, res: Response) => {
+    const userId = req.user?.id
+
+    const albums = await prisma.album.findMany({
+        where: {
+            userId: userId, 
+        },
+        include: {
+            banda: true, 
+            songs: true
+        }    
+    })
+
+    res.send({albums})
 })

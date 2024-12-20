@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Album" ADD COLUMN     "userId" TEXT NOT NULL DEFAULT '';
+
+-- AddForeignKey
+ALTER TABLE "Album" ADD CONSTRAINT "Album_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
