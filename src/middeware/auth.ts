@@ -12,7 +12,7 @@ export function authenticateJWT(req: Request, res: Response, next: NextFunction)
 
     try {
         const token = authHeader.split(' ')[1]
-        const decoded = validateToken(token) as {id: string, email: string, senha: string}
+        const decoded = validateToken(token) as {id: string, email: string, senha: string, username: string}
         req.user = decoded
         next()
     } catch (e) {

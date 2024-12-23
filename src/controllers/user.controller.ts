@@ -38,7 +38,7 @@ userRoute.post('/login', async (req: Request, res: Response) => {
         return
     }
 
-    const accessToken = generateToken({id: user.id, email: user.email, senha: user.senha})
+    const accessToken = generateToken({id: user.id, email: user.email, senha: user.senha, username: user.usuario})
     res.send({token: accessToken})
 })
 
@@ -53,8 +53,9 @@ userRoute.get('/albums', authenticateJWT, async (req: Request, res: Response) =>
                 },
             },
             ratings: {
-                every: {
-                    nota: {equals: 0.0}
+                none: {
+                    userId: userId,
+                    nota: { gt: 0 }
                 }
             }
     
@@ -86,6 +87,7 @@ userRoute.get('/albums/rated', authenticateJWT, async (req: Request, res: Respon
             },
             ratings: {
                 some: {
+                    userId: userId,
                     nota: {gt: 0}
                 }
             }
