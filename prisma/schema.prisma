@@ -58,5 +58,7 @@ model Rating {
   user     User   @relation(fields: [userId], references: [id])
   album    Album  @relation(fields: [albumId], references: [id])
 
+  dateRated  DateTime?
+
   @@unique([userId, albumId])
 }
