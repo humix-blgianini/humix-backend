@@ -34,6 +34,6 @@ app.use(express.json())
 
 app.use('/api', routes)
  
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`)
 });

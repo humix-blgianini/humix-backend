@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Album" ALTER COLUMN "userId" SET DEFAULT '43005ab8-7157-4ac5-b7d4-f870846ae35f';
